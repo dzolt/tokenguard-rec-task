@@ -12,12 +12,14 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import { CSVFileData } from "../../typings";
-import { format, parse } from "date-fns";
+import { format, isWithinInterval, parse } from "date-fns";
 import CustomTooltip from "./CustomTooltip";
+import { Range } from "react-date-range";
 
 type Props = {
   csvFile: LocalFile;
   granularity: string;
+  dateRange: Range;
 };
 
 const handleGranularityChange = (
@@ -108,7 +110,7 @@ const handleGranularityChange = (
   }
 };
 
-const CustomChart = ({ csvFile, granularity }: Props) => {
+const CustomChart = ({ csvFile, granularity, dateRange }: Props) => {
   const csvData = useParseLocalCSV(csvFile);
 
   const [granularityCSVData, setGranularityCSVData] =
@@ -142,6 +144,16 @@ const CustomChart = ({ csvFile, granularity }: Props) => {
       setGranularityCSVData(granularityChangedData);
     }
   }, [csvData, granularity]);
+
+  useEffect(() => {
+    const filteredData = csvData.filter((item) => {
+      return isWithinInterval(item.date, {
+        start: dateRange.startDate!,
+        end: dateRange.endDate!,
+      });
+    });
+    setGranularityCSVData(filteredData);
+  }, [dateRange, csvData]);
 
   return (
     <>
