@@ -11,10 +11,10 @@ type Props = TooltipProps<ValueType, NameType> & { granularity: string };
 const CustomTooltip = ({ payload, label, active, granularity }: Props) => {
   if (active && payload && payload.length) {
     let formattedDate: string = "";
-    if (granularity === "day") {
-      formattedDate = format(label, "dd/MM/yyyy");
-    } else if (granularity === "month") {
+    if (granularity === "month") {
       formattedDate = format(label, "MM/yyyy");
+    } else {
+      formattedDate = format(label, "dd/MM/yyyy");
     }
     return (
       <Card className="text-black">
